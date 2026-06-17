@@ -2,13 +2,13 @@ const { JsonWebTokenError } = require('jsonwebtoken')
 const usermodel = require( '../models/user.model')
 const bcrypt = require( 'bcryptjs')
 const jwt = require('jsonwebtoken')
+const tokenblacklistmodel = require( '../models/blacklist.model')
 
-// /**
-//  * 
-//  * @name  resgisterusercontroller
-//  * @description regiser a new user , expect a username , email , password 
-//  * @access public 
-// */
+/**
+ * @name  resgisterusercontroller
+ * @description regiser a new user , expect a username , email , password 
+ * @access public 
+*/
 async function registerusercontroller( req , res ) {
 
     const { username , email , password } = req.body
@@ -61,11 +61,11 @@ async function registerusercontroller( req , res ) {
 
 }
 
-// /**
-//  * @name loginusercontroller 
-//  * @description Login a user 
-//  * @access public
-//  */
+/**
+ * @name loginusercontroller 
+ * @description Login a user 
+ * @access public
+ */
 
 async function loginusercontroller (req,res) {
 
@@ -112,7 +112,31 @@ async function loginusercontroller (req,res) {
     
 }
 
+/**
+ * @name logoutcontroller
+ * @description logs out the user 
+ * @access public 
+
+ */
+
+async function logoutusercontroller (req,res) {
+
+    const token = req.cookies.token
+
+    if( token ){
+        await tokenblacklistmodel.create({ token })
+    }
+
+    res.clearCookie("token")
+
+    res.status(200).json({
+        message: "User successfully logged out ! "
+    })
+    
+}
+
 module.exports = {
     registerusercontroller,
-    loginusercontroller
+    loginusercontroller,
+    logoutusercontroller
 } 
