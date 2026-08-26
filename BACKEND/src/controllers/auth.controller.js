@@ -27,9 +27,9 @@ export const signup = async (req, res) => {
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production", 
+            secure: process.env.NODE_ENV === "production",
             sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-            maxAge: 7 * 24 * 60 * 60 * 1000  
+            maxAge: 7 * 24 * 60 * 60 * 1000   // 7 days Cookie Stored 
         });
 
         return res.status(201).json({
@@ -95,28 +95,28 @@ export const login = async (req, res) => {
 
 
 
-export const googleAuth = async (req , res) => {
-    
+export const googleAuth = async (req, res) => {
+
     try {
-        
-        const { name , email } = req.body ; 
 
-        let user = await User.findOne( {email})
+        const { name, email } = req.body;
 
-        if( !user ){
+        let user = await User.findOne({ email })
+
+        if (!user) {
             user = await User.create({
-                name , 
+                name,
                 email
             })
         }
 
-        let token = await genToken( user._id)
+        let token = await genToken(user._id)
 
-        res.cookie( 'token' , token , {
-            httpOnly:true ,
+        res.cookie('token', token, {
+            httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-            maxAge: 7*24*60*60*1000  //in ms  ( 7days ) 
+            maxAge: 7 * 24 * 60 * 60 * 1000  //in ms  ( 7days ) 
         })
 
         return res.status(200).json({
@@ -125,24 +125,24 @@ export const googleAuth = async (req , res) => {
         });
 
     } catch (error) {
-        return res.status(500).json({ message: `Google Auth error ${error}`})
+        return res.status(500).json({ message: `Google Auth error ${error}` })
         //console.log(error)
     }
 }
 
 
-export const logout = async (req,res) => {
-    
+export const logout = async (req, res) => {
+
     try {
         res.clearCookie("token", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
             sameSite: process.env.NODE_ENV === "production" ? "none" : "strict"
         });
-        return res.status(200).json({message:'Logout succesfull'})
+        return res.status(200).json({ message: 'Logout succesfull' })
     } catch (error) {
         //console.log(error)
-        return res.status(500).json({ message: `Logout error ${error}`})
-        
+        return res.status(500).json({ message: `Logout error ${error}` })
+
     }
 }
